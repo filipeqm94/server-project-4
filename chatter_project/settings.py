@@ -33,7 +33,6 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     # Custom apps
     "user_profile",
-
     # Default apps
     "django.contrib.admin",
     "django.contrib.auth",
@@ -77,13 +76,17 @@ WSGI_APPLICATION = "project_4.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+DB_NAME = "chatter"
+DB_USER = "chatteruser"
+DB_PASSWORD = "chatter"
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'chatter',
-        'USER': 'chatteruser',
-        'PASSWORD': 'chatter',
-        'HOST': 'localhost'
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": DB_NAME,
+        "USER": DB_USER,
+        "PASSWORD": DB_PASSWORD,
+        "HOST": "localhost",
     }
 }
 
