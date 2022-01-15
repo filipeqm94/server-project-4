@@ -2,3 +2,4 @@ settings.sql
 Pipfile.lock
 .vscode
 *.pyc
+.env
