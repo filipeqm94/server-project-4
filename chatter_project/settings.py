@@ -29,7 +29,7 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.environ["MODE"] == "dev" else False
 
-ALLOWED_HOSTS = [os.environ["APP_NAME"], "localhost"]
+ALLOWED_HOSTS = os.environ['WHITE_LIST'].split(",")
 
 
 # Application definition
@@ -77,12 +77,7 @@ REST_FRAMEWORK = {
 
 # add lolcalhost:3000 to the cors origin whitelist,
 # since that is where the requests from our React App will be coming from
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000",
-#     "http://127.0.0.1:3000",
-#     "https://afternoon-earth-13627.herokuapp.com",
-# ]
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = os.environ['CORS_ALLOWED_LIST'].split(",")
 
 ROOT_URLCONF = "chatter_project.urls"
 

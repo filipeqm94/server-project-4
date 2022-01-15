@@ -2,5 +2,6 @@ settings.sql
 Pipfile.lock
 .vscode
 *.pyc
-.env
+.env*
 .DS_Store
+heroku_upload_env.py
