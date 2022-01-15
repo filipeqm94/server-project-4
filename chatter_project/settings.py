@@ -32,8 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     # local
-    "user_profile",
-    # libraries
+    # packages
     "rest_framework",
     "corsheaders",
     # default
@@ -60,23 +59,17 @@ MIDDLEWARE = [
 ]
 
 REST_FRAMEWORK = {
-    # set default permission classes, which in this case will require
-    # a quest to be authenticated before it is processed
-    # unless specifies otherwise
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
-    # set the default authentication classes,
-    # which determines which authnetication methods the server will try
-    # when it receives a request, in descending order
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
+    ],
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_jwt.authentication.JSONWebTokenAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
 }
 
 # add lolcalhost:3000 to the cors origin whitelist,
 # since that is where the requests from our React App will be coming from
-CORS_ORIGIN_WHITELIST = ("localhost:3000",)
+CORS_ORIGIN_WHITELIST = ("https://localhost:3000",)
 
 ROOT_URLCONF = "chatter_project.urls"
 
