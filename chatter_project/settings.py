@@ -75,11 +75,12 @@ REST_FRAMEWORK = {
 
 # add lolcalhost:3000 to the cors origin whitelist,
 # since that is where the requests from our React App will be coming from
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "https://afternoon-earth-13627.herokuapp.com",
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",
+#     "http://127.0.0.1:3000",
+#     "https://afternoon-earth-13627.herokuapp.com",
+# ]
+CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = "chatter_project.urls"
 
