@@ -3,3 +3,4 @@ Pipfile.lock
 .vscode
 *.pyc
 .env
+.DS_Store
