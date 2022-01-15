@@ -10,7 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import os
+import dj_database_url
+
 from pathlib import Path
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,10 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-ubqobz2jo@q&fmto+pd&2w76i2rns2-yc4s7@sl%pvitvk6at("
+SECRET_KEY = os.environ["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True if os.environ["MODE"] == "dev" else False
 
 ALLOWED_HOSTS = []
 
@@ -45,12 +49,14 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    # CorsMiddleware needs to be placed above any middleware
-    # that generates responses, such as CommonMiddleware
+    "django.middleware.security.SecurityMiddleware",
+    # add white noise middleware right AFTER/BELOW SecurityMiddleware
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    #
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    # add CorsMiddleware right BEFORE/ABOVE CommonMiddleware
     "corsheaders.middleware.CorsMiddleware",
     #
-    "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -69,7 +75,10 @@ REST_FRAMEWORK = {
 
 # add lolcalhost:3000 to the cors origin whitelist,
 # since that is where the requests from our React App will be coming from
-CORS_ORIGIN_WHITELIST = ("https://localhost:3000",)
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
 
 ROOT_URLCONF = "chatter_project.urls"
 
@@ -95,19 +104,7 @@ WSGI_APPLICATION = "chatter_project.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DB_NAME = "chatter"
-DB_USER = "chatteruser"
-DB_PASSWORD = "chatter"
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": DB_NAME,
-        "USER": DB_USER,
-        "PASSWORD": DB_PASSWORD,
-        "HOST": "localhost",
-    }
-}
+DATABASES = {"default": dj_database_url.config(conn_max_age=600)}
 
 
 # Password validation
@@ -145,6 +142,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = "static/"
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
