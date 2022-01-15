@@ -78,6 +78,7 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "https://afternoon-earth-13627.herokuapp.com",
 ]
 
 ROOT_URLCONF = "chatter_project.urls"
