@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 import dj_database_url
 
+# Needed for SIMPLE_JWT
+from datetime import timedelta
+
 from pathlib import Path
 
 
@@ -29,15 +32,14 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.environ["MODE"] == "dev" else False
 
-ALLOWED_HOSTS = os.environ['WHITE_LIST'].split(",")
+ALLOWED_HOSTS = os.environ["WHITE_LIST"].split(",")
 
 
 # Application definition
 
 INSTALLED_APPS = [
     # local
-    # 'accounts',
-    'somethingelse',
+    "accounts",
     # packages
     "rest_framework",
     "corsheaders",
@@ -68,16 +70,31 @@ MIDDLEWARE = [
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticatedOrReadOnly"
+        "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
 }
 
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=14),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": False,
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    "VERIFYING_KEY": None,
+    "AUTH_HEADER_TYPES": ("JWT",),
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
+    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+    "TOKEN_TYPE_CLAIM": "token_type",
+}
+
 # add lolcalhost:3000 to the cors origin whitelist,
 # since that is where the requests from our React App will be coming from
-CORS_ALLOWED_ORIGINS = os.environ['CORS_ALLOWED_LIST'].split(",")
+CORS_ALLOWED_ORIGINS = os.environ["CORS_ALLOWED_LIST"].split(",")
 
 ROOT_URLCONF = "chatter_project.urls"
 
@@ -148,4 +165,4 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# AUTH_USER_MODEL = "accounts.CustomUser"
+AUTH_USER_MODEL = "accounts.CustomUser"
