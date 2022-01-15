@@ -4,4 +4,5 @@ from django.db import models
 
 
 class CustomUser(AbstractUser):
-    pass
+    primary_language = models.CharField(max_length=100, blank=False, null=False)
+    learning_language = models.CharField(max_length=100, blank=False, null=False)
