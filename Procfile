@@ -1,0 +1,1 @@
+web: gunicorn chatter_project.wsgi
