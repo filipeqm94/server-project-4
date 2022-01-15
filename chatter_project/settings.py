@@ -29,13 +29,15 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.environ["MODE"] == "dev" else False
 
-ALLOWED_HOSTS = [os.environ["APP_NAME"],]
+ALLOWED_HOSTS = [os.environ["APP_NAME"], "localhost"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
     # local
+    # 'accounts',
+    'somethingelse',
     # packages
     "rest_framework",
     "corsheaders",
@@ -66,7 +68,7 @@ MIDDLEWARE = [
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
+        "rest_framework.permissions.IsAuthenticatedOrReadOnly"
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -105,7 +107,6 @@ WSGI_APPLICATION = "chatter_project.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
 DATABASES = {"default": dj_database_url.config(conn_max_age=600)}
 
 
@@ -151,3 +152,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# AUTH_USER_MODEL = "accounts.CustomUser"

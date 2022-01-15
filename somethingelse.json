@@ -1,0 +1,1 @@
+[{"model": "somethingelse.objects", "pk": 1, "fields": {"name": "Filipe", "dob": "March 26"}}, {"model": "somethingelse.objects", "pk": 2, "fields": {"name": "Victor", "dob": "Sept 20"}}, {"model": "somethingelse.objects", "pk": 3, "fields": {"name": "Rebeca", "dob": "June 15"}}]
