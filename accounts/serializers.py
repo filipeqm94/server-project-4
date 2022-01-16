@@ -2,11 +2,14 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from .models import CustomUser
 
+# create custom claim to send primary and learning langugages
+# by importing and subclassing with the original serializer
 
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+#     origional serializer       subclass
+class ObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
-        token = super(MyTokenObtainPairSerializer, cls).get_token(user)
+        token = super(ObtainPairSerializer, cls).get_token(user)
 
         # Add custom claims
         token["primary_language"] = user.primary_language
@@ -15,16 +18,18 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
-
+    # specify required fields for user creation
     email = serializers.EmailField(required=True)
     username = serializers.CharField()
     password = serializers.CharField(min_length=8, write_only=True)
 
     class Meta:
+        # relate user model
         model = CustomUser
         fields = ("email", "username", "password")
         extra_kwargs = {"password": {"write_only": True}}
 
+    # create user method
     def create(self, validated_data):
         password = validated_data.pop("password", None)
         instance = self.Meta.model(**validated_data)
