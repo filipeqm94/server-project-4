@@ -1,21 +1,11 @@
 from django.urls import path
 from rest_framework_simplejwt import views as jwt_views
-from .views import (
-    CustomUserCreate,
-    ObtainTokenPairWithLanguageView,
-    LogoutAndBlacklistRefreshTokenForUserView,
-)
+from .views import SignUp, Login, Logout
 
 
 urlpatterns = [
-    path("user/create/", CustomUserCreate.as_view(), name="create_user"),
-    path(
-        "token/obtain/", ObtainTokenPairWithLanguageView.as_view(), name="token_create"
-    ),
-    path("token/refresh/", jwt_views.TokenRefreshView.as_view(), name="token_refresh"),
-    path(
-        "blacklist/",
-        LogoutAndBlacklistRefreshTokenForUserView.as_view(),
-        name="blacklist",
-    ),
+    path("signup/", SignUp.as_view()),
+    path("login/", Login.as_view()),
+    path("token/refresh/", jwt_views.TokenRefreshView.as_view()),
+    path("logout/", Logout.as_view()),
 ]
