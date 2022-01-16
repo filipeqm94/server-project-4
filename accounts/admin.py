@@ -5,4 +5,5 @@ from .models import CustomUser
 class CustomUserAdmin(admin.ModelAdmin):
     model = CustomUser
 
+# register custom user and admin to `admin/`
 admin.site.register(CustomUser, CustomUserAdmin)
