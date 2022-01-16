@@ -40,9 +40,10 @@ ALLOWED_HOSTS = os.environ["WHITE_LIST"].split(",")
 INSTALLED_APPS = [
     # local
     "accounts",
-    # packages
+    # third party
     "rest_framework",
     "corsheaders",
+    "rest_framework_simplejwt.token_blacklist",
     # default
     "django.contrib.admin",
     "django.contrib.auth",
@@ -81,7 +82,7 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=14),
     "ROTATE_REFRESH_TOKENS": True,
-    "BLACKLIST_AFTER_ROTATION": False,
+    "BLACKLIST_AFTER_ROTATION": True,
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
     "VERIFYING_KEY": None,
