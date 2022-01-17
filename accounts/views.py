@@ -4,11 +4,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .serializers import ObtainPairSerializer, CustomUserSerializer
+from .serializers import ObtainTokenPairSerializer, CustomUserSerializer
 
 # login view
 class Login(TokenObtainPairView):
-    serializer_class = ObtainPairSerializer
+    serializer_class = ObtainTokenPairSerializer
 
 
 # signup view
