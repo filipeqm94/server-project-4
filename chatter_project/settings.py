@@ -38,12 +38,6 @@ ALLOWED_HOSTS = os.environ["WHITE_LIST"].split(",")
 # Application definition
 
 INSTALLED_APPS = [
-    # local
-    "accounts",
-    # third party
-    "rest_framework",
-    "corsheaders",
-    "rest_framework_simplejwt.token_blacklist",
     # default
     "django.contrib.admin",
     "django.contrib.auth",
@@ -51,17 +45,20 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # third party
+    "corsheaders",
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
+    # local
+    "accounts",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    # add white noise middleware right AFTER/BELOW SecurityMiddleware
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-    #
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # AFTER/BELOW SecurityMiddleware
+    "corsheaders.middleware.CorsMiddleware",  # BEFORE/ABOVE CommonMiddleware
     "django.contrib.sessions.middleware.SessionMiddleware",
-    # add CorsMiddleware right BEFORE/ABOVE CommonMiddleware
-    "corsheaders.middleware.CorsMiddleware",
-    #
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -75,6 +72,7 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ),
 }
 
@@ -92,10 +90,6 @@ SIMPLE_JWT = {
     "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
     "TOKEN_TYPE_CLAIM": "token_type",
 }
-
-# add lolcalhost:3000 to the cors origin whitelist,
-# since that is where the requests from our React App will be coming from
-CORS_ALLOWED_ORIGINS = os.environ["CORS_ALLOWED_LIST"].split(",")
 
 ROOT_URLCONF = "chatter_project.urls"
 
@@ -167,3 +161,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "accounts.CustomUser"
+
+# add lolcalhost:3000 to the cors origin whitelist,
+# since that is where the requests from our React App will be coming from
+CORS_ALLOWED_ORIGINS = os.environ["CORS_ALLOWED_LIST"].split(",")
