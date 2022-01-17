@@ -6,10 +6,10 @@ from .models import CustomUser
 # by importing and subclassing with the original serializer
 
 #     origional serializer       subclass
-class ObtainPairSerializer(TokenObtainPairSerializer):
+class ObtainTokenPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
-        token = super(ObtainPairSerializer, cls).get_token(user)
+        token = super(ObtainTokenPairSerializer, cls).get_token(user)
 
         # Add custom claims
         token["primary_language"] = user.primary_language
