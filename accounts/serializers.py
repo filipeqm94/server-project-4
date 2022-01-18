@@ -1,3 +1,4 @@
+import json
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from .models import CustomUser
@@ -12,21 +13,32 @@ class ObtainTokenPairSerializer(TokenObtainPairSerializer):
         token = super(ObtainTokenPairSerializer, cls).get_token(user)
 
         # Add custom claims
+        token["username"] = user.username
         token["primary_language"] = user.primary_language
         token["learning_language"] = user.learning_language
+        token["last_login"] = json.dumps(user.last_login, default=str)
+        token["date_joined"] = json.dumps(user.date_joined, default=str)
         return token
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
     # specify required fields for user creation
     email = serializers.EmailField(required=True)
-    username = serializers.CharField()
+    username = serializers.CharField(min_length=6, max_length=18, required=True)
     password = serializers.CharField(min_length=8, write_only=True)
+    primary_language = serializers.CharField(max_length=100, required=True)
+    learning_language = serializers.CharField(max_length=100, required=True)
 
     class Meta:
         # relate user model
         model = CustomUser
-        fields = ("email", "username", "password")
+        fields = (
+            "email",
+            "username",
+            "password",
+            "primary_language",
+            "learning_language",
+        )
         extra_kwargs = {"password": {"write_only": True}}
 
     # create user method
