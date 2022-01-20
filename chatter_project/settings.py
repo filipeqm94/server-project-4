@@ -112,6 +112,7 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = "chatter_project.asgi.application"
 WSGI_APPLICATION = "chatter_project.wsgi.application"
 
 
