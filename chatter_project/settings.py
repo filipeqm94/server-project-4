@@ -53,7 +53,8 @@ INSTALLED_APPS = [
     # local
     "accounts",
     # main
-    "chatter"
+    "chatter",
+    "channels"
 ]
 
 MIDDLEWARE = [
