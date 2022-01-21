@@ -39,6 +39,9 @@ ALLOWED_HOSTS = os.environ["WHITE_LIST"].split(",")
 # Application definition
 
 INSTALLED_APPS = [
+    # main
+    "channels",
+    "chatter",
     # default
     "django.contrib.admin",
     "django.contrib.auth",
@@ -53,9 +56,6 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     # local
     "accounts",
-    # main
-    "channels",
-    "chatter",
 ]
 
 MIDDLEWARE = [
