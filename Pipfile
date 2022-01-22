@@ -13,6 +13,10 @@ whitenoise = "*"
 dj-database-url = "*"
 gunicorn = "*"
 ipython = "*"
+django-heroku = "*"
+daphne = "*"
+channels = "*"
+channels-redis = "*"
 
 [dev-packages]
 

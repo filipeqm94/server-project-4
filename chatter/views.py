@@ -1,7 +1,11 @@
 from django.http import JsonResponse
-from django.shortcuts import render
+from rest_framework.views import APIView
 
 # Create your views here.
+# @login_required
+class Test(APIView):
+  def get(self, request):
+    return JsonResponse({"test":"a quick one too"})
 
 # user chat rooms
 def index(request):

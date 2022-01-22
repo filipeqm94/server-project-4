@@ -25,7 +25,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     # Local
     path("auth/", include("accounts.urls")),
-    # Chatter app
     path('', include('chatter.urls')),
     # Thrid party
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
