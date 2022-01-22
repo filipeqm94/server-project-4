@@ -15,6 +15,7 @@ gunicorn = "*"
 ipython = "*"
 django-heroku = "*"
 daphne = "*"
+channels = "*"
 
 [dev-packages]
 
