@@ -16,6 +16,7 @@ ipython = "*"
 django-heroku = "*"
 daphne = "*"
 channels = "*"
+channels-redis = "*"
 
 [dev-packages]
 
