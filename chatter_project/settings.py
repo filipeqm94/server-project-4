@@ -23,7 +23,6 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
@@ -39,9 +38,6 @@ ALLOWED_HOSTS = os.environ["WHITE_LIST"].split(",")
 # Application definition
 
 INSTALLED_APPS = [
-    # main
-    "channels",
-    "chatter",
     # default
     "django.contrib.admin",
     "django.contrib.auth",
@@ -50,12 +46,14 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # third party
+    "channels",
     "corsheaders",
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     # local
     "accounts",
+    "chatter",
 ]
 
 MIDDLEWARE = [
@@ -121,7 +119,11 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [
+                ("127.0.0.1", 6379)
+                if os.environ["MODE"] == "dev"
+                else os.environ["REDIS_URL"]
+            ],
         },
     },
 }
