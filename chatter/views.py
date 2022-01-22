@@ -7,6 +7,6 @@ from django.shortcuts import render
 def index(request):
   return JsonResponse({'test':'testing'})
   
-# get specific chat room between user1 and user2  
+# get specific chat room between user1 and user2
 def room(request, chat_room_id):
-  return JsonResponse({'chat_room_id': chat_room_id})
+  return JsonResponse({'chat_room_id': 'working'})
