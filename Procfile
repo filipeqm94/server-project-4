@@ -1,1 +1,1 @@
-web: gunicorn chatter_project.wsgi
+web: daphne chatter_project:application --port $PORT --bind 0.0.0.0 -v2
