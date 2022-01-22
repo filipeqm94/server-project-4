@@ -13,6 +13,8 @@ whitenoise = "*"
 dj-database-url = "*"
 gunicorn = "*"
 ipython = "*"
+django-heroku = "*"
+daphne = "*"
 
 [dev-packages]
 
