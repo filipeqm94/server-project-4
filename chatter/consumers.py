@@ -13,8 +13,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Join room group
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
 
-        await self.create_chat_room()
-        await self.create_chat_message()
 
         await self.accept()
 
@@ -22,13 +20,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def create_chat_room(self, user_one, user_two, display_name):
         new_chat_room = ChatRoom.objects.create(user_one=user_one, user_two=user_two, display_name=display_name)
         new_chat_room.save()
-        return new_chat_room
 
     @database_sync_to_async
-    def create_chat_message(self, chat, user, message ):
-        new_chat_message = ChatMessage.objects.create(chat=chat, user=user, message=message)
+    def create_chat_message(self, chat, sender, message ):
+        new_chat_message = ChatMessage.objects.create(chat=chat, sender=sender, message=message)
         new_chat_message.save()
-        return new_chat_message
 
     async def disconnect(self, close_code):
         # Leave room group
@@ -50,7 +46,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.room_group_name, {"type": "chat_message",
             "user1": user_one, "message": message}
         )
+
         
+        await self.create_chat_room(user_one, user_two, self.room_group_name  )
+        await self.create_chat_message(self.room_group_name, user_one, message ) 
+
     async def chat_message(self, event):
         print("from chat_message ---->")
         message = event["message"]
