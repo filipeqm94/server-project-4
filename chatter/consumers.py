@@ -2,6 +2,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from accounts.models import CustomUser
+from chatter.models import *
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -12,12 +13,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Join room group
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
 
+
         await self.accept()
 
     @database_sync_to_async
-    def get_name(self):
-        print(CustomUser.objects.all()[1].username)
-        return CustomUser.objects.all()[1].username
+    def create_chat_room(self, user_one, user_two, display_name):
+        new_chat_room = ChatRoom.objects.create(user_one=user_one, user_two=user_two, display_name=display_name)
+        new_chat_room.save()
+
+    @database_sync_to_async
+    def create_chat_message(self, chat, sender, message ):
+        new_chat_message = ChatMessage.objects.create(chat=chat, sender=sender, message=message)
+        new_chat_message.save()
 
     async def disconnect(self, close_code):
         # Leave room group
@@ -25,8 +32,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     # Receive message from WebSocket
     async def receive(self, text_data):
-        # print('text data', text_data)
         text_data_json = json.loads(text_data)
+        # user1 is sender
+        user_one = text_data_json['user_one']
+        user_two = text_data_json['user_two']
         # print('text data json', text_data_json)
         message = text_data_json["message"]
         print("message", message)
@@ -34,8 +43,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
         print("groupname --->", self.room_group_name)
 
         await self.channel_layer.group_send(
-            self.room_group_name, {"type": "chat_message", "message": message}
+            self.room_group_name, {"type": "chat_message",
+            "user1": user_one, "message": message}
         )
+
+        
+        await self.create_chat_room(user_one, user_two, self.room_group_name  )
+        await self.create_chat_message(self.room_group_name, user_one, message ) 
 
     async def chat_message(self, event):
         print("from chat_message ---->")
