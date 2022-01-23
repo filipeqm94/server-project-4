@@ -54,3 +54,8 @@ class Logout(APIView):
         except Exception as e:
             # send 400
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class Test(APIView):
+    def get(self, request):
+        return Response({"hello": "world"}, status=status.HTTP_200_OK)

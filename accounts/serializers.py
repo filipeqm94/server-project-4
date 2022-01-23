@@ -16,7 +16,8 @@ class ObtainTokenPairSerializer(TokenObtainPairSerializer):
         token["username"] = user.username
         token["primary_language"] = user.primary_language
         token["learning_language"] = user.learning_language
-        token["chat_rooms"] = user.chat_rooms
+        # token["user_one_chat_rooms"] = user.user_one_chat_rooms
+        # token["user_two_chat_rooms"] = user.user_two_chat_rooms
         token["last_login"] = json.dumps(user.last_login, default=str)
         token["date_joined"] = json.dumps(user.date_joined, default=str)
         return token
