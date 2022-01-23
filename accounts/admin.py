@@ -5,6 +5,7 @@ from chatter.models import *
 # Register your models here.
 class CustomUserAdmin(admin.ModelAdmin):
     model = CustomUser
+    # fields = ('username', 'chat_rooms')
 
 class ChatRoomAdmin(admin.ModelAdmin):
     model = ChatRoom
