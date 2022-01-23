@@ -1,16 +1,23 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-
+from channels.db import database_sync_to_async
+from accounts.models import CustomUser
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = self.room_name
+        self.username = await self.get_name()
 
         # Join room group
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
 
         await self.accept()
+
+    @database_sync_to_async
+    def get_name(self):
+        print(CustomUser.objects.all()[1].username)
+        return CustomUser.objects.all()[1].username
 
     async def disconnect(self, close_code):
         # Leave room group
