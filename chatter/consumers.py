@@ -93,7 +93,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.send(
             text_data=json.dumps(
                 {
-                    "message_history": json.dump(list(message_history)),
+                    "message_history": list(message_history),
                 }
             )
         )
