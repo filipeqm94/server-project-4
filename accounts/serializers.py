@@ -37,7 +37,6 @@ class CustomUserSerializer(serializers.ModelSerializer):
         fields = (
             "email",
             "username",
-            "password",
             "primary_language",
             "learning_language",
         )

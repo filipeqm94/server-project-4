@@ -3,8 +3,12 @@ from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.core import serializers
+from django.http import HttpResponse, JsonResponse
 
 from .serializers import ObtainTokenPairSerializer, CustomUserSerializer
+
+from accounts.models import CustomUser
 
 # login view
 class Login(TokenObtainPairView):
@@ -58,4 +62,5 @@ class Logout(APIView):
 
 class Test(APIView):
     def get(self, request):
-        return Response({"hello": "world"}, status=status.HTTP_200_OK)
+        users = CustomUser.objects.all().values('username')
+        return JsonResponse(list(users), safe=False)

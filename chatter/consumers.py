@@ -1,4 +1,5 @@
 import json
+from tabnanny import check
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from accounts.models import CustomUser
@@ -13,25 +14,36 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Join room group
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
 
+
         await self.accept()
 
-    @database_sync_to_async
-    def create_chat_room(self, user_one, user_two, display_name):
-        test_user_one = CustomUser.objects.get(username=user_one)
-        test_user_two = CustomUser.objects.get(username=user_two)
-
-        new_chat_room = ChatRoom.objects.create(
-            user_one=test_user_one, user_two=test_user_two, display_name=display_name
-        )
-        new_chat_room.save()
+    # @database_sync_to_async
+    # def create_chat_room(self, user_one, user_two, display_name):
+    #     room = ChatRoom.objects.filter(display_name=display_name)
+    #     if len(room) == 0:
+    #         print('i dont exist')
+    #         test_user_one = CustomUser.objects.get(username=user_one)
+    #         test_user_two = CustomUser.objects.get(username=user_two)
+        
+    #         new_chat_room = ChatRoom.objects.create(
+    #         user_one=test_user_one, user_two=test_user_two, display_name=display_name)
+    #         new_chat_room.save()
 
     @database_sync_to_async
     def create_chat_message(self, chat, sender, message):
-        chat_room = ChatRoom.objects.get(display_name=chat)
+        print(sender)
+        find_sender = CustomUser.objects.filter(username = sender)[0]
+        chat_room = ChatRoom.objects.filter(room_name=chat)[0]
         new_chat_message = ChatMessage.objects.create(
-            chat=chat_room, sender=sender, message=message
-        )
+        chat=chat_room, sender=find_sender, message=message )
         new_chat_message.save()
+
+    @database_sync_to_async
+    def get_messages(self):
+        print("Getting messages", self.room_group_name)
+        chat = ChatRoom.objects.get(display_name=self.room_group_name)
+        messages = ChatMessage.objects.filter(chat=chat.pk)
+        print(messages)
 
     async def disconnect(self, close_code):
         # Leave room group
@@ -39,23 +51,31 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     # Receive message from WebSocket
     async def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        # user1 is sender
-        user_one = text_data_json["user_one"]
-        user_two = text_data_json["user_two"]
-        # print('text data json', text_data_json)
-        message = text_data_json["message"]
-        print("message", message)
+        pass
+        # data = json.loads(text_data)
+        # # user1 is sender
+        # # if data['type'] == 'open_chat':
+        # #     # await self.create_chat_room()
+        # #     # await self.create_chat_room(user_one, user_two, self.room_group_name)
+        # #     # await self.get_messages()
 
-        print("groupname --->", self.room_group_name)
+        # # else:
+        # user_one =  data["user_one"]
+        # user_two =  data["user_two"]
+        # # print('text data json', text_data_json)
+        # message = data["message"]
+        # print("message", message)
 
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {"type": "chat_message", "user1": user_one, "message": message},
-        )
+        # print("groupname --->", self.room_group_name)
 
-        await self.create_chat_room(user_one, user_two, self.room_group_name)
-        await self.create_chat_message(self.room_group_name, user_one, message)
+        # await self.channel_layer.group_send(
+        #     self.room_group_name,
+        #     {"type": "chat_message", "user1": user_one, "message": message},
+        # )
+
+
+            
+        # await self.create_chat_message(self.room_group_name, user_one, message)
 
     async def chat_message(self, event):
         print("from chat_message ---->")
