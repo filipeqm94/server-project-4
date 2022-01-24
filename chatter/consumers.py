@@ -16,15 +16,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     @database_sync_to_async
-    def get_messages_or_create_room(self):
+    def create_room_if_it_does_not_exist(self, user_one, user_two):
+        first_user = CustomUser.objects.get(username=user_one)
+        second_user = CustomUser.objects.get(username=user_two)
         room = ChatRoom.objects.filter(room_name=self.room_group_name)
-        print(self.room_group_name)
-
+        if len(room) == 0:
+            new_room = ChatRoom.objects.create(
+                user_one=first_user,
+                user_two=second_user,
+                room_name=self.room_group_name,
+            )
+            new_room.save()
 
     @database_sync_to_async
-    def create_chat_message(self, chat, sender, message):
+    def create_chat_message(self, sender, message):
+        user = CustomUser.objects.get(username=sender)
+        chat = ChatRoom.objects.get(room_name=self.room_group_name)
         new_chat_message = ChatMessage.objects.create(
-            chat=chat, sender=sender, message=message
+            chat=chat, sender=user, message=message
         )
         new_chat_message.save()
 
@@ -36,23 +45,55 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         data = json.loads(text_data)
         if data["type"] == "open_chat":
-            print("room openned")
-            await self.get_messages_or_create_room()
+            await self.create_room_if_it_does_not_exist(
+                data["user_one"], data["user_two"]
+            )
+
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {"type": "message_history"},
+            )
+
         elif data["type"] == "chat_message":
-            print("message sent")
-            # await self.create_chat_message()
+            await self.create_chat_message(data["sender"], data["message"])
 
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
                     "type": "chat_message",
-                    "user1": "testing_stuff",
-                    "message": "testing is going well",
+                    "sender": data["sender"],
+                    "message": data["message"],
                 },
             )
 
     async def chat_message(self, event):
-        print("from chat_message ---->")
+        sender = event["sender"]
         message = event["message"]
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "sender": sender,
+                    "message": message,
+                }
+            )
+        )
 
-        await self.send(text_data=json.dumps({"message": message}))
+    @database_sync_to_async
+    def message_history(self, event):
+        def get_messages(self):
+            room = ChatRoom.objects.filter(room_name=self.room_group_name)
+            chat_messages = (
+                ChatMessage.objects.filter(chat=room[0].pk)
+                .values("message", "sender")
+                .order_by("-timestamp")
+            )
+            return chat_messages
+
+        message_history = get_messages(self)
+        self.send(
+            text_data=json.dumps(
+                {
+                    "message_history": json.dump(list(message_history)),
+                }
+            )
+        )
