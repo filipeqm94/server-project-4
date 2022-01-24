@@ -9,31 +9,33 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('chatter', '0001_initial'),
+        ("chatter", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='chatmessage',
-            name='chat',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='chats', to='chatter.chatroom'),
+            model_name="chatmessage",
+            name="chat",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="chats",
+                to="chatter.chatroom",
+            ),
         ),
         migrations.AlterField(
-            model_name='chatroom',
-            name='user_one',
-<<<<<<< HEAD
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='user_one_chat_rooms', to=settings.AUTH_USER_MODEL),
-=======
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='chat_rooms', to=settings.AUTH_USER_MODEL),
->>>>>>> 6de481e (Migrate???)
+            model_name="chatroom",
+            name="user_one",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="chat_rooms",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='chatroom',
-            name='user_two',
-<<<<<<< HEAD
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='user_two_chat_rooms', to=settings.AUTH_USER_MODEL),
-=======
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
->>>>>>> 6de481e (Migrate???)
+            model_name="chatroom",
+            name="user_two",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL
+            ),
         ),
     ]
