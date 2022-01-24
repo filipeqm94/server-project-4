@@ -3,8 +3,11 @@ from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.http import JsonResponse
 
 from .serializers import ObtainTokenPairSerializer, CustomUserSerializer
+from .models import CustomUser
+from chatter.models import ChatMessage, ChatRoom
 
 # login view
 class Login(TokenObtainPairView):
@@ -54,3 +57,18 @@ class Logout(APIView):
         except Exception as e:
             # send 400
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class Test(APIView):
+    def get(self, request):
+        users = CustomUser.objects.all().values('username')
+        return JsonResponse(list(users), safe=False)
+
+class GetMessages(APIView):
+    def get(self, request, room_name):
+        room = ChatRoom.objects.filter(room_name=room_name)
+        chat_messages = (
+            ChatMessage.objects.filter(chat=room[0].pk)
+            .order_by("-timestamp")
+            .values("message", "sender")
+        )
+        return JsonResponse(list(chat_messages), safe=False)
