@@ -191,5 +191,5 @@ if not DEBUG:
     AWS_S3_FILE_OVERWRITE = False
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     S3_URL = f"http://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/"
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')    
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')    
     django_heroku.settings(locals())
