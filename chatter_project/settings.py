@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 import os
 import dj_database_url
-import django_heroku
 
 # Needed for SIMPLE_JWT
 from datetime import timedelta
@@ -118,7 +117,6 @@ TEMPLATES = [
 
 # Channels
 ASGI_APPLICATION = "chatter_project.asgi.application"
-# WSGI_APPLICATION = "chatter_project.wsgi.application"
 
 CHANNEL_LAYERS = {
     "default": {
@@ -189,6 +187,9 @@ CORS_ALLOWED_ORIGINS = os.environ["CORS_ALLOWED_LIST"].split(",")
 
 # Activate Django-Heroku.
 if not DEBUG:
+    import django
+    django.setup()
+    import django_heroku
     AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
     AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
