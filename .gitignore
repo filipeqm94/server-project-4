@@ -5,3 +5,4 @@ Pipfile.lock
 .env*
 .DS_Store
 heroku_upload_env.py
+migrations/
