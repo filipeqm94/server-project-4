@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 import os
 import dj_database_url
+import django_heroku
 
 # Needed for SIMPLE_JWT
 from datetime import timedelta
@@ -51,6 +52,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
+    "django-heroku",
     # local
     "accounts",
     "chatter",
@@ -181,3 +183,6 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 # add lolcalhost:3000 to the cors origin whitelist,
 # since that is where the requests from our React App will be coming from
 CORS_ALLOWED_ORIGINS = os.environ["CORS_ALLOWED_LIST"].split(",")
+
+# Activate Django-Heroku.
+django_heroku.settings(locals())
