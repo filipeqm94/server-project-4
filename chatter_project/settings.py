@@ -187,8 +187,6 @@ CORS_ALLOWED_ORIGINS = os.environ["CORS_ALLOWED_LIST"].split(",")
 
 # Activate Django-Heroku.
 if not DEBUG:
-    import django
-    django.setup()
     import django_heroku
     AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
     AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
