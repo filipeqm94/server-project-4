@@ -19,6 +19,10 @@ from datetime import timedelta
 
 from pathlib import Path
 
+if os.environ["MODE"] == "prod":
+    import django
+
+    django.setup()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -185,11 +189,11 @@ CORS_ALLOWED_ORIGINS = os.environ["CORS_ALLOWED_LIST"].split(",")
 
 # Activate Django-Heroku.
 if not DEBUG:
-    AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
-    AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
+    AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
     AWS_S3_FILE_OVERWRITE = False
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
     S3_URL = f"http://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/"
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')    
+    STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
     django_heroku.settings(locals())
