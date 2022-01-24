@@ -3,8 +3,10 @@ from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.http import JsonResponse
 
 from .serializers import ObtainTokenPairSerializer, CustomUserSerializer
+from .models import CustomUser
 
 # login view
 class Login(TokenObtainPairView):
@@ -54,3 +56,8 @@ class Logout(APIView):
         except Exception as e:
             # send 400
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class Test(APIView):
+    def get(self, request):
+        users = CustomUser.objects.all().values('username')
+        return JsonResponse(list(users), safe=False)

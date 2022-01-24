@@ -4,26 +4,28 @@ from channels.db import database_sync_to_async
 from accounts.models import CustomUser
 from chatter.models import *
 
+
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = self.room_name
-        self.username = await self.get_name()
 
         # Join room group
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
 
-
         await self.accept()
 
     @database_sync_to_async
-    def create_chat_room(self, user_one, user_two, display_name):
-        new_chat_room = ChatRoom.objects.create(user_one=user_one, user_two=user_two, display_name=display_name)
-        new_chat_room.save()
+    def get_messages_or_create_room(self):
+        room = ChatRoom.objects.filter(room_name=self.room_group_name)
+        print(self.room_group_name)
+
 
     @database_sync_to_async
-    def create_chat_message(self, chat, sender, message ):
-        new_chat_message = ChatMessage.objects.create(chat=chat, sender=sender, message=message)
+    def create_chat_message(self, chat, sender, message):
+        new_chat_message = ChatMessage.objects.create(
+            chat=chat, sender=sender, message=message
+        )
         new_chat_message.save()
 
     async def disconnect(self, close_code):
@@ -32,24 +34,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     # Receive message from WebSocket
     async def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        # user1 is sender
-        user_one = text_data_json['user_one']
-        user_two = text_data_json['user_two']
-        # print('text data json', text_data_json)
-        message = text_data_json["message"]
-        print("message", message)
+        data = json.loads(text_data)
+        if data["type"] == "open_chat":
+            print("room openned")
+            await self.get_messages_or_create_room()
+        elif data["type"] == "chat_message":
+            print("message sent")
+            # await self.create_chat_message()
 
-        print("groupname --->", self.room_group_name)
-
-        await self.channel_layer.group_send(
-            self.room_group_name, {"type": "chat_message",
-            "user1": user_one, "message": message}
-        )
-
-        
-        await self.create_chat_room(user_one, user_two, self.room_group_name  )
-        await self.create_chat_message(self.room_group_name, user_one, message ) 
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    "type": "chat_message",
+                    "user1": "testing_stuff",
+                    "message": "testing is going well",
+                },
+            )
 
     async def chat_message(self, event):
         print("from chat_message ---->")
