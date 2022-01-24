@@ -49,11 +49,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 data["user_one"], data["user_two"]
             )
 
-            await self.channel_layer.group_send(
-                self.room_group_name,
-                {"type": "message_history"},
-            )
-
         elif data["type"] == "chat_message":
             await self.create_chat_message(data["sender"], data["message"])
 
@@ -74,26 +69,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 {
                     "sender": sender,
                     "message": message,
-                }
-            )
-        )
-
-    @database_sync_to_async
-    def message_history(self, event):
-        def get_messages(self):
-            room = ChatRoom.objects.filter(room_name=self.room_group_name)
-            chat_messages = (
-                ChatMessage.objects.filter(chat=room[0].pk)
-                .values("message", "sender")
-                .order_by("-timestamp")
-            )
-            return chat_messages
-
-        message_history = get_messages(self)
-        self.send(
-            text_data=json.dumps(
-                {
-                    "message_history": list(message_history),
                 }
             )
         )
