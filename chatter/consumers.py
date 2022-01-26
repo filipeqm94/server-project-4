@@ -1,6 +1,11 @@
+# important to have this at the begging of the file
+# because we are accessing another app to get its models
+# without this, we get an error saying the apps have not been loaded yet
+#
 import django
 
 django.setup()
+#
 
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -34,7 +39,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def create_chat_message(self, sender, message):
-        user = CustomUser.objects.get(username=sender)
+        user = CustomUser.objects.get(pk=sender)
         chat = ChatRoom.objects.get(room_name=self.room_group_name)
         new_chat_message = ChatMessage.objects.create(
             chat=chat, sender=user, message=message
