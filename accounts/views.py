@@ -58,10 +58,18 @@ class Logout(APIView):
             # send 400
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-class Test(APIView):
+
+class GetUsers(APIView):
     def get(self, request):
-        users = CustomUser.objects.all().values('username')
+        # variable name = request.GET.get("the value of key that was passed in the request", or "empty string")
+        primary_language = request.GET.get("primary_language", "")
+        learning_language = request.GET.get("learning_language", "")
+        # filter the database to get the matching users
+        users = CustomUser.objects.filter(
+            primary_language=learning_language, learning_language=primary_language
+        ).values("username")
         return JsonResponse(list(users), safe=False)
+
 
 class GetMessages(APIView):
     def get(self, request, room_name):
