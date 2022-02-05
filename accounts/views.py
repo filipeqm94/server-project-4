@@ -23,19 +23,32 @@ class SignUp(APIView):
     authentication_classes = ()
 
     def post(self, request, format="json"):
-        # check the request data against the serializer
-        serializer = CustomUserSerializer(data=request.data)
-        # if the data received is valid
-        if serializer.is_valid():
-            # create the new user
-            user = serializer.save()
-            # if the creation was successfull
-            if user:
-                # send back the created user with the 200 response
-                json = serializer.data
-                return Response(json, status=status.HTTP_201_CREATED)
-        # send back 400 if missing information or bad request
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        username = CustomUser.objects.filter(username=request.data["username"]).exists()
+        email = CustomUser.objects.filter(email=request.data["email"]).exists()
+
+        if username:
+            return Response(
+                {"detail": "Username is already taken"},
+                status=status.HTTP_409_CONFLICT,
+            )
+        elif email:
+            return Response(
+                {"detail": "Email is already taken"}, status=status.HTTP_409_CONFLICT
+            )
+        else:
+            # check the request data against the serializer
+            serializer = CustomUserSerializer(data=request.data)
+            # if the data received is valid
+            if serializer.is_valid():
+                # create the new user
+                user = serializer.save()
+                # if the creation was successfull
+                if user:
+                    # send back the created user with the 200 response
+                    json = serializer.data
+                    return Response(json, status=status.HTTP_201_CREATED)
+            # send back 400 if missing information or bad request
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # logout view
