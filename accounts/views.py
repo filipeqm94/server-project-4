@@ -93,3 +93,28 @@ class GetMessages(APIView):
             .values("message", "sender")
         )
         return JsonResponse(list(chat_messages), safe=False)
+
+
+class GetChatRooms(APIView):
+    def get(self, request):
+        username = CustomUser.objects.get(username=request.GET.get("username", ""))
+        rooms_one = list(ChatRoom.objects.filter(user_one=username).values("user_two"))
+        rooms_two = list(ChatRoom.objects.filter(user_two=username).values("user_one"))
+        chat_rooms = rooms_one + rooms_two
+        users_list = []
+
+        for pk in chat_rooms:
+            if "user_one" in pk:
+                users_list.append(
+                    CustomUser.objects.filter(pk=pk["user_one"]).values("username")[0][
+                        "username"
+                    ]
+                )
+            else:
+                users_list.append(
+                    CustomUser.objects.filter(pk=pk["user_two"]).values("username")[0][
+                        "username"
+                    ]
+                )
+
+        return JsonResponse(users_list, safe=False)
