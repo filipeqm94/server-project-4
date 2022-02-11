@@ -1,6 +1,6 @@
-from django.urls import path
+from django.urls import path, re_path
 from rest_framework_simplejwt import views as jwt_views
-from .views import SignUp, Login, Logout, Test, GetMessages
+from .views import GetChatRooms, SignUp, Login, Logout, GetMessages, GetUsers
 
 
 urlpatterns = [
@@ -8,6 +8,7 @@ urlpatterns = [
     path("login/", Login.as_view()),
     path("token/refresh/", jwt_views.TokenRefreshView.as_view()),
     path("logout/", Logout.as_view()),
-    path("test/", Test.as_view()),
-    path("getmessages/<str:room_name>/", GetMessages.as_view())
+    path("getusers/", GetUsers.as_view()),
+    path("getmessages/<str:room_name>/", GetMessages.as_view()),
+    path("getchatrooms/", GetChatRooms.as_view()),
 ]

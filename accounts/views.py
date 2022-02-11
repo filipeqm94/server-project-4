@@ -23,19 +23,32 @@ class SignUp(APIView):
     authentication_classes = ()
 
     def post(self, request, format="json"):
-        # check the request data against the serializer
-        serializer = CustomUserSerializer(data=request.data)
-        # if the data received is valid
-        if serializer.is_valid():
-            # create the new user
-            user = serializer.save()
-            # if the creation was successfull
-            if user:
-                # send back the created user with the 200 response
-                json = serializer.data
-                return Response(json, status=status.HTTP_201_CREATED)
-        # send back 400 if missing information or bad request
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        username = CustomUser.objects.filter(username=request.data["username"]).exists()
+        email = CustomUser.objects.filter(email=request.data["email"]).exists()
+
+        if username:
+            return Response(
+                {"detail": "Username is already taken"},
+                status=status.HTTP_409_CONFLICT,
+            )
+        elif email:
+            return Response(
+                {"detail": "Email is already taken"}, status=status.HTTP_409_CONFLICT
+            )
+        else:
+            # check the request data against the serializer
+            serializer = CustomUserSerializer(data=request.data)
+            # if the data received is valid
+            if serializer.is_valid():
+                # create the new user
+                user = serializer.save()
+                # if the creation was successfull
+                if user:
+                    # send back the created user with the 200 response
+                    json = serializer.data
+                    return Response(json, status=status.HTTP_201_CREATED)
+            # send back 400 if missing information or bad request
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # logout view
@@ -58,10 +71,18 @@ class Logout(APIView):
             # send 400
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-class Test(APIView):
+
+class GetUsers(APIView):
     def get(self, request):
-        users = CustomUser.objects.all().values('username')
+        # variable name = request.GET.get("the value of key that was passed in the request", or "empty string")
+        primary_language = request.GET.get("primary_language", "")
+        learning_language = request.GET.get("learning_language", "")
+        # filter the database to get the matching users
+        users = CustomUser.objects.filter(
+            primary_language=learning_language, learning_language=primary_language
+        ).values("username")
         return JsonResponse(list(users), safe=False)
+
 
 class GetMessages(APIView):
     def get(self, request, room_name):
@@ -72,3 +93,28 @@ class GetMessages(APIView):
             .values("message", "sender")
         )
         return JsonResponse(list(chat_messages), safe=False)
+
+
+class GetChatRooms(APIView):
+    def get(self, request):
+        username = CustomUser.objects.get(username=request.GET.get("username", ""))
+        rooms_one = list(ChatRoom.objects.filter(user_one=username).values("user_two"))
+        rooms_two = list(ChatRoom.objects.filter(user_two=username).values("user_one"))
+        chat_rooms = rooms_one + rooms_two
+        users_list = []
+
+        for pk in chat_rooms:
+            if "user_one" in pk:
+                users_list.append(
+                    CustomUser.objects.filter(pk=pk["user_one"]).values("username")[0][
+                        "username"
+                    ]
+                )
+            else:
+                users_list.append(
+                    CustomUser.objects.filter(pk=pk["user_two"]).values("username")[0][
+                        "username"
+                    ]
+                )
+
+        return JsonResponse(users_list, safe=False)
