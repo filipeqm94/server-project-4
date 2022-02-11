@@ -19,6 +19,7 @@ channels = "*"
 channels-redis = "*"
 
 [dev-packages]
+requests = "*"
 
 [requires]
 python_version = "3.9"
