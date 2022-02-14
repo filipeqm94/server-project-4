@@ -1,6 +1,6 @@
 # Project 4
 
-Server side repository for Chatter - A Language Excahnge App
+Server side repository for Chatter - A Language Exchange App
 
 ### Dependencies
 
